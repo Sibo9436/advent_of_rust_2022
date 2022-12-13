@@ -1,6 +1,5 @@
 // Advent of code 2022
 
-use std::cmp::max;
 use std::collections::HashSet;
 use std::str::FromStr;
 

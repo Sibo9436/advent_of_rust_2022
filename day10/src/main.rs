@@ -1,7 +1,7 @@
 // Advent of code 2022
 
-use std::collections::HashMap;
-use std::num::ParseIntError;
+
+
 use std::str::FromStr;
 use crate::Operation::{AddX, NoOp};
 
@@ -35,19 +35,19 @@ impl FromStr for Instruction {
                 op: AddX,
                 val:value
             }),
-            Err(_) => return Err(())
+            Err(_) => Err(())
         }
     }
 }
 
-const ticks: &[i32; 2] = &[1, 2];
+const TICKS: &[i32; 2] = &[1, 2];
 
 fn first_part(input: &[Instruction]) -> i32 {
     let mut current_instruction = 0;
     let mut x_register = 1;
     let mut tick_counter = 1;
     let mut total = 0;
-    let mut remaining_ticks:i32 = ticks[*&input[current_instruction].op as usize]-1;
+    let mut remaining_ticks:i32 = TICKS[input[current_instruction].op as usize]-1;
     while current_instruction < input.len() {
         if (tick_counter -20) % 40 == 0{
             println!("Adding to total {} at tick {tick_counter}", tick_counter * x_register);
@@ -61,7 +61,7 @@ fn first_part(input: &[Instruction]) -> i32 {
             };
             current_instruction += 1;
             if current_instruction == input.len() { break; }
-            remaining_ticks = ticks[*&input[current_instruction].op as usize]
+            remaining_ticks = TICKS[input[current_instruction].op as usize]
         }
         remaining_ticks -= 1;
 
@@ -76,7 +76,7 @@ fn second_part(input: &Vec<Instruction>)-> String{
     let mut current_instruction = 0;
     let mut x_register = 1;
     let mut tick_counter:i32 = 1;
-    let mut remaining_ticks:i32 = ticks[*&input[current_instruction].op as usize]-1;
+    let mut remaining_ticks:i32 = TICKS[input[current_instruction].op as usize]-1;
     let mut crt_screen = vec! {vec! {'x'; 40}; 6};
     while current_instruction < input.len() {
         if ((tick_counter-1)%40).abs_diff(x_register)<=1{
@@ -92,7 +92,7 @@ fn second_part(input: &Vec<Instruction>)-> String{
             };
             current_instruction += 1;
             if current_instruction == input.len() { break; }
-            remaining_ticks = ticks[*&input[current_instruction].op as usize]
+            remaining_ticks = TICKS[input[current_instruction].op as usize]
         }
         remaining_ticks -= 1;
 
@@ -125,6 +125,7 @@ fn main() {
     let input_result = first_part(&input);
     println!("1. Test {input_result}");
     let test_result = second_part(&test);
+    println!("2. Test {test_result}");
     let input_result = second_part(&input);
     println!("2. Input\n{input_result}");
     println!("Hello, Rust");

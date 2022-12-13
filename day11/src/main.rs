@@ -82,8 +82,8 @@ fn first_part(input: &[Monkey]) -> i64 {
     let mut monkey_inspections = vec![0; input.len()];
     for _ in 0..20{
         for index in 0..monkeys.len(){
-            while monkeys[index].items.len() > 0{
-                let mut monkey = &mut monkeys[index];
+            while !monkeys[index].items.is_empty(){
+                let monkey = &mut monkeys[index];
                 monkey_inspections[index]+=1;
                 let val = monkey.items.remove(0);
                 //It's a shame I do this every iteration
@@ -126,8 +126,8 @@ fn second_part(input: &[Monkey]) -> i64 {
     }
     let mut item_pool: Vec<Vec<i64>> = vec![Vec::new(); itemcount];
     let mut item_index = 0;
-    for (index,monkey) in monkeys.iter_mut().enumerate(){
-        for mut item in &mut monkey.items{
+    for (_index,monkey) in monkeys.iter_mut().enumerate(){
+        for item in &mut monkey.items{
             //we remove the actual value and insert a reference to our item index
             let val = *item;
             *item = item_index as i64;
@@ -144,9 +144,9 @@ fn second_part(input: &[Monkey]) -> i64 {
     for _ in 0..10000{
         // dbg!(&monkeys);
         for index in 0..monkeys.len(){
-            while monkeys[index].items.len() > 0{
-                let mut monkey = &mut monkeys[index];
-                let test = monkey.test;
+            while !monkeys[index].items.is_empty(){
+                let monkey = &mut monkeys[index];
+                let _test = monkey.test;
                 monkey_inspections[index]+=1;
                 let item_index = monkey.items.remove(0);
                 //It's a shame I do this every iteration
@@ -174,7 +174,7 @@ fn second_part(input: &[Monkey]) -> i64 {
                 }else{
                     monkey.target.falso
                 };
-                let other = monkeys[target].test;
+                let _other = monkeys[target].test;
                 // println!("Pushing  value {} to monkey {target}, val:{val}, final:{final_value}, test:{test}", val % other);
                 monkeys[target].items.push(item_index);
             }

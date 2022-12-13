@@ -104,9 +104,8 @@ fn second_part(input: &Input) -> u64 {
             end: input.end,
             height_map: input.height_map.clone(),
         }
-    }).map(|input| first_part(&input)).filter(|o| o.is_some())
-        .map(|op|op.unwrap())
-        .fold(u64::MAX,|a,b| min(a,b))
+    }).filter_map(|input| first_part(&input))
+        .fold(u64::MAX,min)
 }
 
 fn reachable_neighbors(px: usize, py: usize, map: &Vec<Vec<u8>>) -> Vec<(usize, usize)> {

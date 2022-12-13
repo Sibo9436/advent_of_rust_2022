@@ -1,7 +1,7 @@
 use std::borrow::Borrow;
 use std::cell::RefCell;
 use std::fmt::{Display, Formatter, Pointer};
-use std::ops::Deref;
+
 use std::rc::Rc;
 use crate::NodeType::{Dir, File};
 
@@ -24,19 +24,19 @@ struct TreeNode {
 
 impl TreeNode {
     fn new() -> Self {
-        return TreeNode {
+        TreeNode {
             name: None,
             node_type: None,
             children: vec![],
             parent: None,
-        };
+        }
     }
 }
 
 impl Display for TreeNode {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "- {} of {} {} \n", self.name.as_ref().unwrap_or(&String::from("unnamed")),
-               RefCell::borrow(&self.parent.as_ref()
+        writeln!(f, "- {} of {} {} ", self.name.as_ref().unwrap_or(&String::from("unnamed")),
+               RefCell::borrow(self.parent.as_ref()
                    .unwrap_or(&Rc::new(RefCell::new(TreeNode::new()))))
                    .name.as_ref().unwrap_or(&String::from("idk")),
                match &self.node_type.as_ref().unwrap() {
@@ -46,7 +46,7 @@ impl Display for TreeNode {
         )?;
         for child in &self.children {
             f.pad("\t")?;
-            RefCell::borrow(&child).fmt(f)?
+            RefCell::borrow(child).fmt(f)?
         }
         Ok(())
     }
@@ -56,7 +56,7 @@ impl Display for TreeNode {
 fn build_tree(input: &str) -> TreeObj {
     // let mut current_directory;
     let input: Vec<&str> = input.trim().split('\n').collect();
-    let mut dir_tree = TreeNode {
+    let dir_tree = TreeNode {
         name: Some(String::from("/")),
         node_type: Some(Dir(0)),
         children: vec![],
@@ -66,7 +66,7 @@ fn build_tree(input: &str) -> TreeObj {
     let root = Rc::clone(&current_node);
     let mut i = 0;
     while i < input.len() {
-        print!("hl\n");
+        println!("hl");
         let line = input[i].trim();
         if !line.starts_with("$ ") {
             panic!("Line should be a command, got {line}");
@@ -123,17 +123,17 @@ fn build_tree(input: &str) -> TreeObj {
     root
 }
 
-fn calc_dirs(tree: &TreeObj,mut sum :&mut u64) -> u64 {
+fn calc_dirs(tree: &TreeObj,sum :&mut u64) -> u64 {
     let mut sizesum = 0;
     for child in &RefCell::borrow(tree).children {
-        sizesum += match &RefCell::borrow(&child).node_type {
+        sizesum += match &RefCell::borrow(child).node_type {
             None => { panic!("NO GOD NO") }
             Some(t) => {
                 match t {
                     File(size) => { *size }
                     Dir(size) => {
                         if size == &0 {
-                            calc_dirs(&child,sum)
+                            calc_dirs(child,sum)
                         } else {
                             *size
                         }
@@ -143,7 +143,7 @@ fn calc_dirs(tree: &TreeObj,mut sum :&mut u64) -> u64 {
         }
     }
     if sizesum <= 100000{
-        println!("{sizesum} {}", RefCell::borrow(&tree));
+        println!("{sizesum} {}", RefCell::borrow(tree));
         *sum += sizesum;
     }
     sizesum
@@ -151,14 +151,14 @@ fn calc_dirs(tree: &TreeObj,mut sum :&mut u64) -> u64 {
 fn smallest_deletable(tree: &TreeObj,target: u64, smallest: &mut u64) -> u64 {
     let mut sizesum = 0;
     for child in &RefCell::borrow(tree).children {
-        sizesum += match &RefCell::borrow(&child).node_type {
+        sizesum += match &RefCell::borrow(child).node_type {
             None => { panic!("NO GOD NO") }
             Some(t) => {
                 match t {
                     File(size) => { *size }
                     Dir(size) => {
                         if size == &0 {
-                            smallest_deletable(&child,target,smallest)
+                            smallest_deletable(child,target,smallest)
                         } else {
                             *size
                         }
@@ -168,23 +168,23 @@ fn smallest_deletable(tree: &TreeObj,target: u64, smallest: &mut u64) -> u64 {
         }
     }
     if sizesum >= target && sizesum <= *smallest{
-        println!("{sizesum} {}", RefCell::borrow(&tree));
+        println!("{sizesum} {}", RefCell::borrow(tree));
         *smallest = sizesum;
     }
     sizesum
 }
 
 fn first_part(input: &str) -> u64 {
-    let mut tree = build_tree(input);
+    let tree = build_tree(input);
     let mut sum =0;
-    let totsize = calc_dirs(&tree,&mut sum);
+    let _totsize = calc_dirs(&tree,&mut sum);
     println!("Sum {sum}");
     // println!("{}", RefCell::borrow(&tree));
 
     12
 }
 fn second_part(input:&str) -> u64 {
-    let mut tree = build_tree(input);
+    let tree = build_tree(input);
     let mut sum=0;
     let totsize = calc_dirs(&tree,&mut sum);
     let mut smallest = u64::MAX;
